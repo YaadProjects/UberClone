@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">UberClone</string>
     <string name="title_activity_rider">Map</string>
+    <string name="uber_cancel">Cancel Uber</string>
+    <string name="uber_on_the_way">Your uber is on its way...</string>
+    <string name="request_uber">Request Uber</string>
 </resources>

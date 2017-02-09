@@ -59,7 +59,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Valu
             if (userType.equals("rider")) {
                 startActivity(new Intent(getApplicationContext(), RiderActivity.class));
             } else if (userType.equals("driver")) {
-                startActivity(new Intent(getApplicationContext(), DriverActivity.class));
+                startActivity(new Intent(getApplicationContext(), ViewRequestsActivity.class));
             }
         }
     }
