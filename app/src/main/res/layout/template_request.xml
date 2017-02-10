@@ -8,12 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="test text view"
-        android:id="@+id/textViewLatitude"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="test text view"
-        android:id="@+id/textViewLongtitude"/>
+        android:id="@+id/textViewLocation"
+        android:padding="10dp"/>
 
 </LinearLayout>
