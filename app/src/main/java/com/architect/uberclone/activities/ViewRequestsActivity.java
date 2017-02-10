@@ -1,11 +1,15 @@
 package com.architect.uberclone.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import android.view.textservice.TextInfo;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,33 +18,47 @@ import com.architect.uberclone.R;
 import com.architect.uberclone.models.Request;
 import com.architect.uberclone.models.RequestLocation;
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewRequestsActivity extends Activity implements AdapterView.OnItemClickListener {
+public class ViewRequestsActivity extends Activity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = ViewRequestsActivity.class.getSimpleName();
+    public static final int REQUEST_CODE_PERMISSIONS = 1;
 
     private DatabaseReference mDatabaseRef;
     private FirebaseAuth mAuth;
+    private GoogleApiClient mGoogleApiClient;
 
     private FirebaseListAdapter<Request> mListAdapter;
 
     private List<RequestLocation> requestLocations;
-    
+
+    private Location currentLocation;
+    private RequestLocation requestLocation;
+    private LocationRequest mLocationRequest;
+
     ListView mListViewRequests;
+    TextView _distance;
 
     private void init() {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("requests");
 
         mAuth = FirebaseAuth.getInstance();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         mListViewRequests = (ListView) findViewById(R.id.listViewRequests);
 
@@ -51,11 +69,24 @@ public class ViewRequestsActivity extends Activity implements AdapterView.OnItem
         ) {
             @Override
             protected void populateView(View v, Request model, int position) {
-                RequestLocation requestLocation = new RequestLocation(model.getLat(),model.getLon());
+                requestLocation = new RequestLocation(model.getLat(),model.getLon());
                 requestLocations.add(requestLocation);
 
-                TextView textView = (TextView) v.findViewById(R.id.textViewLocation);
-                textView.setText(requestLocation.toString());
+                TextView _location = (TextView) v.findViewById(R.id.textViewLocation);
+                _location.setText(requestLocation.toString());
+
+                /**
+                 *
+                 * _distance = (TextView) findViewById(R.id.textView_requestDistance);
+                     if (currentLocation != null) {
+                         _distance.setText(String.valueOf(
+                         DriverActivity.calculationByDIstance(
+                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                         new LatLng(requestLocation.getLatitude(), requestLocation.getLongtitude()))
+                         ) + " miles");
+                     }
+                 *
+                 */
             }
         };
 
@@ -71,9 +102,71 @@ public class ViewRequestsActivity extends Activity implements AdapterView.OnItem
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(getApplicationContext(), DriverActivity.class);
         intent.putExtra("RequestLocation", requestLocations.get(position));
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.length > 0) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+                    return;
+            }
+
+            try {
+                if (mGoogleApiClient != null) {
+                    currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    /**
+                     *
+                     * _distance.setText(String.valueOf(
+                         DriverActivity.calculationByDIstance(
+                            new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                            new LatLng(requestLocation.getLatitude(), requestLocation.getLongtitude()))
+                         ) + " miles");
+                     */
+                }
+
+            } catch (SecurityException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
+                REQUEST_CODE_PERMISSIONS);
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(3000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

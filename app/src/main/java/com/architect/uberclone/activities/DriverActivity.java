@@ -107,8 +107,11 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(_requestLocation, DEFAULT_CAMERA_ZOOM));
                 builder.include(_requestLocation);
 
-                ActivityCompat.requestPermissions(DriverActivity.this, new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
-                        REQUEST_CODE_PERMISSIONS);
+                ActivityCompat.requestPermissions(
+                        DriverActivity.this,
+                        new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
+                        REQUEST_CODE_PERMISSIONS
+                );
 
                 if (currentLocation != null) {
                     LatLng _currentLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -148,10 +151,13 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
                     LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
                     mTextViewDistance.setText("Distance: " +
-                            String.valueOf(new DecimalFormat("#.00").format(calculationByDIstance(
-                                    new LatLng(requestLocation.getLatitude(), requestLocation.getLongtitude()),
-                                    new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())))) +
-                            " miles"
+                            String.valueOf(new DecimalFormat("#.00").format(
+                                    DriverActivity.calculationByDIstance(
+                                        new LatLng(requestLocation.getLatitude(), requestLocation.getLongtitude()),
+                                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())
+                                    )
+                                )
+                            ) + " miles"
                     );
 
                     calculateAndDrawPath();
@@ -172,8 +178,11 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
     public void onConnected(@Nullable Bundle bundle) {
         Log.i(TAG, "onConnected: ");
 
-        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
-                REQUEST_CODE_PERMISSIONS);
+        ActivityCompat.requestPermissions(
+                this,
+                new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
+                REQUEST_CODE_PERMISSIONS
+        );
 
         if (currentLocation != null) {
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -227,7 +236,7 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
     // ------------------------------------- Helper methods ------------------------------------------------------------------
 
     @TargetApi(Build.VERSION_CODES.N)
-    public double calculationByDIstance(LatLng StartP, LatLng EndP) {
+    public static double calculationByDIstance(LatLng StartP, LatLng EndP) {
         int Radius = 6371;// radius of earth in Km
         double lat1 = StartP.latitude;
         double lat2 = EndP.latitude;
