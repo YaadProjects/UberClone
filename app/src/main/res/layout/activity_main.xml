@@ -8,20 +8,33 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorPrimary"
     tools:context="com.architect.uberclone.activities.MainActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:background="#2222ff"
+            android:id="@+id/buttonGotoAppropriateScreen"
+            android:text="Open your version of the app"/>
+
+
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buttonLogout"
         android:text="Logout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:background="@color/colorPrimaryDark"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/buttonGotoAppropriateScreen"
-        android:layout_below="@id/buttonLogout"
-        android:text="Open your version of the app"/>
 
 </RelativeLayout>

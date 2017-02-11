@@ -10,6 +10,7 @@ import android.icu.text.DecimalFormat;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -89,7 +90,7 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
     protected void onStop() {
         super.onStop();
 
-        mGoogleApiClient.disconnect();
+       mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -262,6 +263,7 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
     }
 
     private void init() {
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
