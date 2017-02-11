@@ -2,15 +2,11 @@ package com.architect.uberclone.activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Path;
 import android.icu.text.DecimalFormat;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -25,7 +21,6 @@ import com.architect.uberclone.utils.JSONParser;
 import com.architect.uberclone.utils.PathFinder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.Drive;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -35,7 +30,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -90,7 +84,42 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
     protected void onStop() {
         super.onStop();
 
-       mGoogleApiClient.disconnect();
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        // TODO: 10/02/17
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // TODO: 10/02/17
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i(TAG, "onConnected: ");
+
+        ActivityCompat.requestPermissions(
+                this,
+                new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
+                REQUEST_CODE_PERMISSIONS
+        );
+
+        if (currentLocation != null) {
+            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Your location");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            mCurrentLocationMarker = mMap.addMarker(markerOptions);
+        }
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(3000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
     @Override
@@ -139,11 +168,11 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.i(TAG, "onRequestPermissionsResult: ");
+
         if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.length > 0) {
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+            for (int grantResult : grantResults)
+                if (grantResult == PackageManager.PERMISSION_DENIED)
                     return;
-            }
 
             if (mGoogleApiClient != null) {
                 try {
@@ -173,41 +202,6 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
                 }
             }
         }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "onConnected: ");
-
-        ActivityCompat.requestPermissions(
-                this,
-                new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
-                REQUEST_CODE_PERMISSIONS
-        );
-
-        if (currentLocation != null) {
-            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Your location");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-            mCurrentLocationMarker = mMap.addMarker(markerOptions);
-        }
-
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5000);
-        mLocationRequest.setFastestInterval(3000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        // TODO: 10/02/17  
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // TODO: 10/02/17
     }
 
     @Override

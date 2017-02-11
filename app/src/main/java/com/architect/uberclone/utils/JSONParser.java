@@ -13,13 +13,14 @@ import java.net.URL;
 
 public class JSONParser {
 
-    public static final String TAG = JSONParser.class.getSimpleName();
+    private static final String TAG = JSONParser.class.getSimpleName();
 
     static InputStream is = null;
     static JSONObject jObj = null;
     private static String json = "";
 
     public JSONParser() {
+        //
     }
 
     public static String getJSONFromUrl(String url) {
@@ -31,9 +32,8 @@ public class JSONParser {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "iso-8859-1"), 8);
             StringBuilder sb = new StringBuilder();
             String line = null;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null)
                 sb.append(line).append("\n");
-            }
 
             json = sb.toString();
             in.close();

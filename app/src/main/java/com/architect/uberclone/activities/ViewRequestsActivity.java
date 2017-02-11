@@ -39,8 +39,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewRequestsActivity extends Activity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
+public class ViewRequestsActivity extends Activity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener
+{
     public static final String TAG = ViewRequestsActivity.class.getSimpleName();
     public static final int REQUEST_CODE_PERMISSIONS = 1;
 
