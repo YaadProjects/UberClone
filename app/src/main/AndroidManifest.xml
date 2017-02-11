@@ -54,7 +54,7 @@
 
         <activity
             android:name=".activities.DriverActivity"
-            android:label="@string/title_activity_driver"></activity>
+            android:label="@string/title_activity_driver" />
     </application>
 
 </manifest>

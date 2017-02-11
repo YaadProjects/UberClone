@@ -15,8 +15,6 @@ public class JSONParser {
 
     private static final String TAG = JSONParser.class.getSimpleName();
 
-    static InputStream is = null;
-    static JSONObject jObj = null;
     private static String json = "";
 
     public JSONParser() {
@@ -24,7 +22,6 @@ public class JSONParser {
     }
 
     public static String getJSONFromUrl(String url) {
-
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(url).openConnection());
             InputStream in = connection.getInputStream();
