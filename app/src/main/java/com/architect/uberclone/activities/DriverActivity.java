@@ -187,8 +187,7 @@ public class DriverActivity extends FragmentActivity implements OnMapReadyCallba
                                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())
                                     )
                                 )
-                            ) + " miles"
-                    );
+                            ) + " miles");
 
                     calculateAndDrawPath();
                     try {
